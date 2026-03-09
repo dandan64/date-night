@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>הזמנה לדייט</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #ffe6e6;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+        }
+        h1 {
+            color: #ff4d4d;
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+        .buttons-container {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            justify-content: center;
+        }
+        button {
+            font-size: 1.5rem;
+            padding: 10px 30px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+        #yesBtn {
+            background-color: #ff4d4d;
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 77, 77, 0.4);
+        }
+        #yesBtn:hover {
+            background-color: #ff1a1a;
+        }
+        #noBtn {
+            background-color: #f1f1f1;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1 id="questionText">האם תרצי לצאת איתי לדייט?</h1>
+    <div class="buttons-container">
+        <button id="yesBtn" onclick="acceptDate()">כן!</button>
+        <button id="noBtn" onclick="rejectDate()">לא</button>
+    </div>
+
+    <script>
+        let noClickCount = 0;
+        const questionText = document.getElementById('questionText');
+        const yesBtn = document.getElementById('yesBtn');
+        const noBtn = document.getElementById('noBtn');
+
+        function rejectDate() {
+            noClickCount++;
+            
+            if (noClickCount === 1) {
+                questionText.innerText = "האם את בטוחה?";
+                yesBtn.style.transform = "scale(1.5)";
+                noBtn.style.transform = "scale(0.5)";
+            } else if (noClickCount === 2) {
+                questionText.innerText = "בבקשהה";
+                yesBtn.style.transform = "scale(2)";
+                
+                noBtn.style.position = "fixed";
+                const maxX = window.innerWidth - noBtn.offsetWidth;
+                const maxY = window.innerHeight - noBtn.offsetHeight;
+                const x = Math.random() * maxX;
+                const y = Math.random() * maxY;
+                
+                noBtn.style.left = `${x}px`;
+                noBtn.style.top = `${y}px`;
+            } else if (noClickCount >= 3) {
+                questionText.innerText = "בבקשההה";
+                noBtn.style.display = "none";
+                yesBtn.style.transform = "scale(2.5)";
+            }
+        }
+
+        function acceptDate() {
+            const duration = 3 * 1000;
+            const animationEnd = Date.now() + duration;
+            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+            function randomInRange(min, max) {
+                return Math.random() * (max - min) + min;
+            }
+
+            const interval = setInterval(function() {
+                const timeLeft = animationEnd - Date.now();
+
+                if (timeLeft <= 0) {
+                    return clearInterval(interval);
+                }
+
+                const particleCount = 50 * (timeLeft / duration);
+                confetti(Object.assign({}, defaults, { 
+                    particleCount, 
+                    origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }, 
+                    shapes: ['heart'], 
+                    colors: ['#ff0000', '#ffb3b3'] 
+                }));
+                confetti(Object.assign({}, defaults, { 
+                    particleCount, 
+                    origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }, 
+                    shapes: ['heart'], 
+                    colors: ['#ff0000', '#ffb3b3'] 
+                }));
+            }, 250);
+
+            setTimeout(() => {
+                // הכותרת המעודכנת
+                const eventTitle = encodeURIComponent("דייט עם האחד והיחיד");
+                
+                // תאריך התחלה וסיום (23 במרץ 2026) בפורמט YYYYMMDD/YYYYMMDD
+                const eventDates = "20260323/20260324";
+                
+                // יצירת הקישור הסופי
+                const calendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${eventTitle}&dates=${eventDates}`;
+                window.open(calendarUrl, '_blank');
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
