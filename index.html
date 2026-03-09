@@ -57,8 +57,8 @@
     <img id="cute-gif" src="idle.gif" style="width: 200px; border-radius: 15px; margin-bottom: 20px;">
     <h1 id="questionText">האם תרצי לצאת איתי לדייט?</h1>
     <div class="buttons-container">
-        <button id="yesBtn" onmouseenter="changeGif('happy')" onmouseleave="changeGif('idle')" onclick="acceptDate()">כן!</button>
-        <button id="noBtn" onmouseenter="changeGif('sad')" onmouseleave="changeGif('idle')" onmouseover="runAway()" onclick="rejectDate()">לא</button>
+        <button id="yesBtn" onclick="acceptDate()">כן!</button>
+        <button id="noBtn" onmouseover="runAway()" onclick="rejectDate()">לא</button>
     </div>
     <!--<button id="noBtn" onmouseover="runAway()" onclick="rejectDate()">לא</button>
      <button id="yesBtn" onclick="acceptDate()">כן!</button> --> 
@@ -69,6 +69,12 @@
         const yesBtn = document.getElementById('yesBtn');
         const noBtn = document.getElementById('noBtn');
         const gifImage = document.getElementById('cute-gif');
+
+        const preloadedGifs = {};
+        ['happy.gif', 'sad.gif', 'idle.gif'].forEach(gif => {
+            preloadedGifs[gif] = new Image();
+            preloadedGifs[gif].src = gif;
+        });
 
         function rejectDate() {
             noClickCount++;
@@ -161,6 +167,35 @@
                 gifImage.src = "idle.gif";
             }
         }
+        document.addEventListener('mousemove', (e) => {
+            // אם היא כבר אישרה את הדייט, נפסיק לעקוב אחרי העכבר
+            if (questionText.innerText === "ידעתי שתסכימי! ❤️") return;
+
+            const mouseX = e.clientX;
+            const mouseY = e.clientY;
+
+            // פונקציית עזר לחישוב מרחק ממרכז כפתור
+            const getDistance = (btn) => {
+                const rect = btn.getBoundingClientRect();
+                const btnX = rect.left + rect.width / 2;
+                const btnY = rect.top + rect.height / 2;
+                return Math.sqrt(Math.pow(mouseX - btnX, 2) + Math.pow(mouseY - btnY, 2));
+            };
+
+            const distToYes = getDistance(yesBtn);
+            const distToNo = getDistance(noBtn);
+
+            // אם העכבר רחוק מדי משני הכפתורים (למשל מעל 300 פיקסל), נחזור למצב המתנה
+            if (distToYes > 300 && distToNo > 300) {
+                changeGif('idle');
+            } 
+            // אחרת, נבדוק למי הוא קרוב יותר
+            else if (distToYes < distToNo) {
+                changeGif('happy');
+            } else {
+                changeGif('sad');
+            }
+        });
     </script>
 </body>
 </html>
