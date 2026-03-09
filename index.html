@@ -54,18 +54,21 @@
     </style>
 </head>
 <body>
-    <img id="cute-gif" src="https://media1.tenor.com/m/m1U_1N2y0HwAAAAd/bubu-dudu-bubu.gif" style="width: 200px; border-radius: 15px; margin-bottom: 20px;">
+    <img id="cute-gif" src="idle.gif" style="width: 200px; border-radius: 15px; margin-bottom: 20px;">
     <h1 id="questionText">האם תרצי לצאת איתי לדייט?</h1>
     <div class="buttons-container">
-        <button id="yesBtn" onclick="acceptDate()">כן!</button>
-        <button id="noBtn" onmouseover="runAway()" onclick="rejectDate()">לא</button>
+        <button id="yesBtn" onmouseenter="changeGif('happy')" onmouseleave="changeGif('idle')" onclick="acceptDate()">כן!</button>
+        <button id="noBtn" onmouseenter="changeGif('sad')" onmouseleave="changeGif('idle')" onmouseover="runAway()" onclick="rejectDate()">לא</button>
     </div>
-
+    <!--<button id="noBtn" onmouseover="runAway()" onclick="rejectDate()">לא</button>
+     <button id="yesBtn" onclick="acceptDate()">כן!</button> --> 
+          
     <script>
         let noClickCount = 0;
         const questionText = document.getElementById('questionText');
         const yesBtn = document.getElementById('yesBtn');
         const noBtn = document.getElementById('noBtn');
+        const gifImage = document.getElementById('cute-gif');
 
         function rejectDate() {
             noClickCount++;
@@ -82,7 +85,7 @@
         function runAway() {
             // התנאי הקריטי: אנחנו בורחים *רק* אם היא כבר לחצה פעמיים
             if (noClickCount >= 2) {
-                questionText.innerText = "אה אה! עכשיו תנסי לתפוס אותי 🏃‍♂️";
+                questionText.innerText = "את חושבת שיש לך חופש בחירה??";
                 
                 // שליפת הכפתור מהשורה והפיכתו לחופשי במסך
                 noBtn.style.position = "fixed";
@@ -104,6 +107,8 @@
         }
 
         function acceptDate() {
+            gifImage.src = "happy.gif"; // הופך את הדובי לשמח קבוע
+            questionText.innerText = "ידעתי שתסכימי! ❤️";
             const duration = 3 * 1000;
             const animationEnd = Date.now() + duration;
             const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
@@ -143,6 +148,18 @@
                 const calendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${eventTitle}&dates=${eventDates}&details=${eventDetails}`;
                 window.open(calendarUrl, '_blank');
             }, 2000);
+        }
+        function changeGif(mood) {
+            // מוודאים שלא מחליפים גיף אם היא כבר לחצה "כן" (כדי לא להרוס את חגיגת הסיום)
+            if (questionText.innerText === "ידעתי שתסכימי! ❤️") return;
+
+            if (mood === 'happy') {
+                gifImage.src = "happy.gif";
+            } else if (mood === 'sad') {
+                gifImage.src = "sad.gif";
+            } else {
+                gifImage.src = "idle.gif";
+            }
         }
     </script>
 </body>
