@@ -54,10 +54,11 @@
     </style>
 </head>
 <body>
+    <img id="cute-gif" src="https://media1.tenor.com/m/m1U_1N2y0HwAAAAd/bubu-dudu-bubu.gif" style="width: 200px; border-radius: 15px; margin-bottom: 20px;">
     <h1 id="questionText">האם תרצי לצאת איתי לדייט?</h1>
     <div class="buttons-container">
         <button id="yesBtn" onclick="acceptDate()">כן!</button>
-        <button id="noBtn" onclick="rejectDate()">לא</button>
+        <button id="noBtn" onmouseover="runAway()" onclick="rejectDate()">לא</button>
     </div>
 
     <script>
@@ -74,21 +75,31 @@
                 yesBtn.style.transform = "scale(1.5)";
                 noBtn.style.transform = "scale(0.5)";
             } else if (noClickCount === 2) {
-                questionText.innerText = "בבקשהה";
+                questionText.innerText = "נו בבקשהה 🥺";
                 yesBtn.style.transform = "scale(2)";
+            }
+        }
+        function runAway() {
+            // התנאי הקריטי: אנחנו בורחים *רק* אם היא כבר לחצה פעמיים
+            if (noClickCount >= 2) {
+                questionText.innerText = "אה אה! עכשיו תנסי לתפוס אותי 🏃‍♂️";
                 
+                // שליפת הכפתור מהשורה והפיכתו לחופשי במסך
                 noBtn.style.position = "fixed";
+                
+                // חישוב מיקום רנדומלי בתוך גבולות המסך
                 const maxX = window.innerWidth - noBtn.offsetWidth;
                 const maxY = window.innerHeight - noBtn.offsetHeight;
                 const x = Math.random() * maxX;
                 const y = Math.random() * maxY;
                 
+                // הזזת הכפתור
                 noBtn.style.left = `${x}px`;
                 noBtn.style.top = `${y}px`;
-            } else if (noClickCount >= 3) {
-                questionText.innerText = "בבקשההה";
-                noBtn.style.display = "none";
-                yesBtn.style.transform = "scale(2.5)";
+                
+                // כבונוס, נגדיל את ה'כן' עוד קצת בכל פעם שהיא מנסה להתחמק
+                yesBtn.style.transform = `scale(${2 + (noClickCount * 0.2)})`;
+                noClickCount++; // ממשיכים לספור כדי להגדיל את הכן
             }
         }
 
@@ -125,13 +136,11 @@
 
             setTimeout(() => {
                 // הכותרת המעודכנת
-                const eventTitle = encodeURIComponent("דייט עם האחד והיחיד");
+                const eventTitle = encodeURIComponent("דייט חגיגי (אישור הגעה חובה)");
+                const eventDetails = encodeURIComponent("הוזמנת רשמית על ידי מנהל אגף רגשות ולוגיסטיקה. נא להיערך בהתאם לערב מדהים.");
+                const eventDates = "20260323/20260324"; 
                 
-                // תאריך התחלה וסיום (23 במרץ 2026) בפורמט YYYYMMDD/YYYYMMDD
-                const eventDates = "20260323/20260324";
-                
-                // יצירת הקישור הסופי
-                const calendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${eventTitle}&dates=${eventDates}`;
+                const calendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${eventTitle}&dates=${eventDates}&details=${eventDetails}`;
                 window.open(calendarUrl, '_blank');
             }, 2000);
         }
