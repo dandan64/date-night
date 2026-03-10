@@ -115,6 +115,7 @@
                 questionText.innerText = "נו בבקשהה 🥺";
                 yesBtn.style.transform = "scale(1.5)";
                 noBtn.style.transform = "scale(0.5)";
+                noBtn.addEventListener('mouseenter', runAway);
             } else if (noClickCount >= 2) {
                 // תיקון הבאג: אם היא לא הזיזה את העכבר ולחצה פעם שלישית - הכפתור יברח!
                 // runAway();
@@ -156,29 +157,25 @@
         //     }
         // }
         function runAway() {
-            // אם היא כבר תפסה את הכפתור והמשחק נגמר - תפסיק לברוח
             if (isAccepted || isEscaping) return;
 
-            // מתחיל לברוח רק אחרי לחיצה אחת
-            if (noClickCount >= 1) {
-                questionText.innerText = "את חושבת שיש לך חופש בחירה?? 🏃‍♀️";
-                
-                // שליפת הכפתור מהשורה
-                noBtn.style.position = "fixed";
-                
-                // חישוב מיקום (עם שוליים קטנים כדי שלא יברח אל מחוץ למסך)
-                const maxX = window.innerWidth - noBtn.offsetWidth - 20;
-                const maxY = window.innerHeight - noBtn.offsetHeight - 20;
-                const x = Math.max(10, Math.random() * maxX);
-                const y = Math.max(10, Math.random() * maxY);
-                
-                // הזזת הכפתור (עכשיו זה יקרה לאט ובצורה "מרחפת" בזכות ה-CSS)
-                noBtn.style.left = `${x}px`;
-                noBtn.style.top = `${y}px`;
-                setTimeout(() => {
-                    isEscaping = false; 
-                }, 1000);
-            }
+            isEscaping = true; // נועל את הכפתור בזמן שהוא זז
+            questionText.innerText = "את חושבת שיש לך חופש בחירה?? 🏃‍♀️";
+            
+            noBtn.style.position = "fixed";
+            
+            const maxX = window.innerWidth - noBtn.offsetWidth - 20;
+            const maxY = window.innerHeight - noBtn.offsetHeight - 20;
+            const x = Math.max(10, Math.random() * maxX);
+            const y = Math.max(10, Math.random() * maxY);
+            
+            noBtn.style.left = `${x}px`;
+            noBtn.style.top = `${y}px`;
+
+            // נותן לכפתור שנייה וחצי של מנוחה שבה העכבר לא משפיע עליו, כדי שיהיה קל לתפוס אותו
+            setTimeout(() => {
+                isEscaping = false; 
+            }, 1500); 
         }
 
         function acceptDate() {
