@@ -50,6 +50,7 @@
         #noBtn {
             background-color: #f1f1f1;
             color: #333;
+            transition: left 0.15s ease-out, top 0.15s ease-out, transform 0.3s ease;
         }
     </style>
 </head>
@@ -184,13 +185,15 @@
 
             const distToYes = getDistance(yesBtn);
             const distToNo = getDistance(noBtn);
+            
+            const PROXIMITY_THRESHOLD = Math.min(window.innerWidth, window.innerHeight) *0.25; // סף מרחק דינמי לפי גודל המסך
 
-            // אם העכבר רחוק מדי משני הכפתורים (למשל מעל 300 פיקסל), נחזור למצב המתנה
-            if (distToYes > 150 && distToNo > 150) {
+            const closerToYes = distToYes < distToNo;
+            const withinRange = Math.min(distToYes, distToNo) < PROXIMITY_THRESHOLD;
+
+            if(!withinRange) {
                 changeGif('idle');
-            } 
-            // אחרת, נבדוק למי הוא קרוב יותר
-            else if (distToYes < distToNo) {
+            } else if (closerToYes) {
                 changeGif('happy');
             } else {
                 changeGif('sad');
