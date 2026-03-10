@@ -106,18 +106,21 @@
         function rejectDate() {
             noClickCount++;
             
+            // if (noClickCount === 1) {
+            //     questionText.innerText = "האם את בטוחה?";
+            //     yesBtn.style.transform = "scale(1.5)";
+            //     noBtn.style.transform = "scale(0.5)";
             if (noClickCount === 1) {
-                questionText.innerText = "האם את בטוחה?";
-                yesBtn.style.transform = "scale(1.5)";
-                noBtn.style.transform = "scale(0.5)";
-            } else if (noClickCount === 2) {
                 questionText.innerText = "נו בבקשהה 🥺";
                 yesBtn.style.transform = "scale(2)";
+            } else if (noClickCount >= 2) {
+                // תיקון הבאג: אם היא לא הזיזה את העכבר ולחצה פעם שלישית - הכפתור יברח!
+                runAway();
             }
         }
         function runAway() {
             // התנאי הקריטי: אנחנו בורחים *רק* אם היא כבר לחצה פעמיים
-            if (noClickCount >= 2) {
+            if (noClickCount >= 1) {
                 questionText.innerText = "את חושבת שיש לך חופש בחירה??";
                 
                 // שליפת הכפתור מהשורה והפיכתו לחופשי במסך
@@ -143,6 +146,7 @@
             gifImage.src = "happy.gif"; // הופך את הדובי לשמח קבוע
             isAccepted = true; // נעילה למצב "כן"
             changeGif('happy', true); // עדכון מיידי של הגיף למצב שמח (עם force)
+            yesBtn.style.transform = "scale(1)"; // הדגשה של הכן
             questionText.innerText = "ידעתי שתסכימי! ❤️";
             const duration = 3 * 1000;
             const animationEnd = Date.now() + duration;
