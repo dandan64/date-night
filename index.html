@@ -91,6 +91,7 @@
         let noClickCount = 0;
         let currentMood = 'idle'; // השומר שלנו למניעת טעינות כפולות
         let isAccepted = false; // השומר שלנו למניעת שינויים אחרי ה"כן"
+        let isEscaping = false; // מונע מהכפתור לברוח שוב בזמן שהוא כבר בתנועה
 
         const questionText  = document.getElementById('questionText');
         const yesBtn        = document.getElementById('yesBtn');
@@ -156,7 +157,7 @@
         // }
         function runAway() {
             // אם היא כבר תפסה את הכפתור והמשחק נגמר - תפסיק לברוח
-            if (isAccepted) return;
+            if (isAccepted || isEscaping) return;
 
             // מתחיל לברוח רק אחרי לחיצה אחת
             if (noClickCount >= 1) {
@@ -174,6 +175,9 @@
                 // הזזת הכפתור (עכשיו זה יקרה לאט ובצורה "מרחפת" בזכות ה-CSS)
                 noBtn.style.left = `${x}px`;
                 noBtn.style.top = `${y}px`;
+                setTimeout(() => {
+                    isEscaping = false; 
+                }, 1000);
             }
         }
 
