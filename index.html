@@ -67,7 +67,7 @@
         .buttons-container { display: flex; gap: 18px; }
         button { font-family: 'Frank Ruhl Libre', serif; font-size: 1.4rem; font-weight: 700; padding: 12px 36px; border: none; border-radius: 50px; cursor: pointer; transition: all 0.3s ease; }
         #yesBtn { background: linear-gradient(135deg, #ff6b6b, #ff3333); color: white; box-shadow: 0 6px 20px rgba(255, 77, 77, 0.45); }
-        #noBtn { background-color: #f0f0f0; color: #555; position: relative; }
+        #noBtn { background-color: #f0f0f0; color: #555; position: relative; transition: left 0.7s ease-out, top 0.7s ease-out, transform 0.3s ease, background-color 0.3s ease; }
     </style>
 </head>
 <body>
@@ -116,30 +116,64 @@
                 noBtn.style.transform = "scale(0.5)";
             } else if (noClickCount >= 2) {
                 // תיקון הבאג: אם היא לא הזיזה את העכבר ולחצה פעם שלישית - הכפתור יברח!
-                runAway();
+                // runAway();
+                noBtn.innerText = "כן!";
+                noBtn.style.background = "linear-gradient(135deg, #ff6b6b, #ff3333)";
+                noBtn.style.color = "white";
+                noBtn.style.boxShadow = "0 6px 20px rgba(255, 77, 77, 0.45)";
+                
+                // 2. מפעילים את כל הזיקוקים והיומן (כאילו היא לחצה על הכן המקורי)
+                acceptDate();
+                
+                // 3. דורסים את הטקסט הרגיל בשביל לעקוץ אותה
+                setTimeout(() => {
+                    questionText.innerText = "הא! תפסתי אותך! לחצת כן! 😈❤️";
+                }, 50);
             }
         }
-        function runAway() {
-            // התנאי הקריטי: אנחנו בורחים *רק* אם היא כבר לחצה פעמיים
-            if (noClickCount >= 1) {
-                questionText.innerText = "את חושבת שיש לך חופש בחירה??";
+        // function runAway() {
+        //     // התנאי הקריטי: אנחנו בורחים *רק* אם היא כבר לחצה פעמיים
+        //     if (noClickCount >= 1) {
+        //         questionText.innerText = "את חושבת שיש לך חופש בחירה??";
                 
-                // שליפת הכפתור מהשורה והפיכתו לחופשי במסך
+        //         // שליפת הכפתור מהשורה והפיכתו לחופשי במסך
+        //         noBtn.style.position = "fixed";
+                
+        //         // חישוב מיקום רנדומלי בתוך גבולות המסך
+        //         const maxX = window.innerWidth - noBtn.offsetWidth;
+        //         const maxY = window.innerHeight - noBtn.offsetHeight;
+        //         const x = Math.random() * maxX;
+        //         const y = Math.random() * maxY;
+                
+        //         // הזזת הכפתור
+        //         noBtn.style.left = `${x}px`;
+        //         noBtn.style.top = `${y}px`;
+                
+        //         // כבונוס, נגדיל את ה'כן' עוד קצת בכל פעם שהיא מנסה להתחמק
+        //         yesBtn.style.transform = `scale(${2 + (noClickCount * 0.2)})`;
+        //         noClickCount++; // ממשיכים לספור כדי להגדיל את הכן
+        //     }
+        // }
+        function runAway() {
+            // אם היא כבר תפסה את הכפתור והמשחק נגמר - תפסיק לברוח
+            if (isAccepted) return;
+
+            // מתחיל לברוח רק אחרי לחיצה אחת
+            if (noClickCount >= 1) {
+                questionText.innerText = "את חושבת שיש לך חופש בחירה?? 🏃‍♀️";
+                
+                // שליפת הכפתור מהשורה
                 noBtn.style.position = "fixed";
                 
-                // חישוב מיקום רנדומלי בתוך גבולות המסך
-                const maxX = window.innerWidth - noBtn.offsetWidth;
-                const maxY = window.innerHeight - noBtn.offsetHeight;
-                const x = Math.random() * maxX;
-                const y = Math.random() * maxY;
+                // חישוב מיקום (עם שוליים קטנים כדי שלא יברח אל מחוץ למסך)
+                const maxX = window.innerWidth - noBtn.offsetWidth - 20;
+                const maxY = window.innerHeight - noBtn.offsetHeight - 20;
+                const x = Math.max(10, Math.random() * maxX);
+                const y = Math.max(10, Math.random() * maxY);
                 
-                // הזזת הכפתור
+                // הזזת הכפתור (עכשיו זה יקרה לאט ובצורה "מרחפת" בזכות ה-CSS)
                 noBtn.style.left = `${x}px`;
                 noBtn.style.top = `${y}px`;
-                
-                // כבונוס, נגדיל את ה'כן' עוד קצת בכל פעם שהיא מנסה להתחמק
-                yesBtn.style.transform = `scale(${2 + (noClickCount * 0.2)})`;
-                noClickCount++; // ממשיכים לספור כדי להגדיל את הכן
             }
         }
 
