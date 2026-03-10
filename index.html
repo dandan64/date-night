@@ -5,72 +5,98 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>הזמנה לדייט</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@300;400;700;900&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --pink-light:  #fff0f0;
+            --pink-mid:    #ffcece;
+            --pink-main:   #ff4d4d;
+            --cream:       #fff8f8;
+        }
+
         body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #ffe6e6;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            overflow: hidden;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            min-height: 100vh; margin: 0; overflow: hidden; position: relative;
+            background-color: var(--pink-light);
+            font-family: 'Frank Ruhl Libre', serif;
         }
-        h1 {
-            color: #ff4d4d;
-            font-size: 3rem;
-            text-align: center;
-            margin-bottom: 2rem;
-            transition: all 0.3s ease;
+
+        /* רקע נושם */
+        .bg-mesh {
+            position: fixed; inset: 0; z-index: 0;
+            background: radial-gradient(ellipse at 20% 20%, #ffd6d6 0%, transparent 55%),
+                        radial-gradient(ellipse at 80% 80%, #ffe0e0 0%, transparent 55%);
+            animation: meshShift 8s ease-in-out infinite alternate;
         }
-        .buttons-container {
-            display: flex;
-            gap: 20px;
-            align-items: center;
-            justify-content: center;
+        @keyframes meshShift {
+            0%   { filter: hue-rotate(0deg) brightness(1); }
+            100% { filter: hue-rotate(8deg) brightness(1.04); }
         }
-        button {
-            font-size: 1.5rem;
-            padding: 10px 30px;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: bold;
+
+        /* לבבות מרחפים */
+        .hearts-bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+        .heart-particle {
+            position: absolute; bottom: -60px; font-size: 1.2rem; opacity: 0;
+            animation: floatUp linear infinite;
         }
-        #yesBtn {
-            background-color: #ff4d4d;
-            color: white;
-            box-shadow: 0 4px 15px rgba(255, 77, 77, 0.4);
+        /* הגדרות פרטניות לכל לב */
+        .heart-particle:nth-child(1)  { left: 5%;  font-size: 0.8rem; animation-duration: 9s;  animation-delay: 0s;   }
+        .heart-particle:nth-child(2)  { left: 28%; font-size: 0.9rem; animation-duration: 8s;  animation-delay: 4s;   }
+        .heart-particle:nth-child(3)  { left: 58%; font-size: 0.7rem; animation-duration: 10s; animation-delay: 3s;   }
+        .heart-particle:nth-child(4)  { left: 82%; font-size: 0.9rem; animation-duration: 9s;  animation-delay: 5s;   }
+        
+        @keyframes floatUp {
+            0%   { transform: translateY(0) rotate(0deg); opacity: 0; }
+            10%  { opacity: 0.4; }
+            80%  { opacity: 0.25; }
+            100% { transform: translateY(-110vh) rotate(25deg); opacity: 0; }
         }
-        #yesBtn:hover {
-            background-color: #ff1a1a;
+
+        /* התוכן המרכזי */
+        .content { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; text-align: center; }
+        
+        #cute-gif {
+            width: 180px; height: 180px; border-radius: 50%; box-shadow: 0 0 0 6px var(--cream), 0 0 0 10px var(--pink-mid);
+            margin-bottom: 22px; transition: box-shadow 0.4s ease;
         }
-        #noBtn {
-            background-color: #f1f1f1;
-            color: #333;
-            transition: left 0.15s ease-out, top 0.15s ease-out, transform 0.3s ease;
-        }
+        h1#questionText { color: var(--pink-main); font-size: clamp(1.6rem, 5vw, 2.8rem); font-weight: 700; margin-bottom: 1.8rem; transition: opacity 0.25s, transform 0.25s; }
+        h1#questionText.changing { opacity: 0; transform: translateY(-8px); }
+
+        .buttons-container { display: flex; gap: 18px; }
+        button { font-family: 'Frank Ruhl Libre', serif; font-size: 1.4rem; font-weight: 700; padding: 12px 36px; border: none; border-radius: 50px; cursor: pointer; transition: all 0.3s ease; }
+        #yesBtn { background: linear-gradient(135deg, #ff6b6b, #ff3333); color: white; box-shadow: 0 6px 20px rgba(255, 77, 77, 0.45); }
+        #noBtn { background-color: #f0f0f0; color: #555; position: relative; }
     </style>
 </head>
 <body>
-    <img id="cute-gif" src="idle.gif" style="width: 200px; border-radius: 15px; margin-bottom: 20px;">
-    <h1 id="questionText">האם תרצי לצאת איתי לדייט?</h1>
-    <div class="buttons-container">
-        <button id="yesBtn" onclick="acceptDate()">כן!</button>
-        <button id="noBtn" onmouseover="runAway()" onclick="rejectDate()">לא</button>
+    <div class="bg-mesh"></div>
+    <div class="hearts-bg">
+        <span class="heart-particle">💗</span><span class="heart-particle">♡</span>
+        <span class="heart-particle">💕</span><span class="heart-particle">💖</span>
     </div>
+    
+    <div class="content">
+        <div class="bear-wrapper" id="bearWrapper"><img id="cute-gif" src="idle.gif" alt="דובי חמוד"></div>
+        <h1 id="questionText">עדן, האם תרצי לצאת איתי לדייט?</h1>
+        <div class="buttons-container">
+            <button id="yesBtn" onclick="acceptDate()">כן!</button>
+            <button id="noBtn" onmouseover="runAway()" onclick="rejectDate()">לא</button>
+        </div>
     <!--<button id="noBtn" onmouseover="runAway()" onclick="rejectDate()">לא</button>
      <button id="yesBtn" onclick="acceptDate()">כן!</button> --> 
           
     <script>
         let noClickCount = 0;
-        const questionText = document.getElementById('questionText');
-        const yesBtn = document.getElementById('yesBtn');
-        const noBtn = document.getElementById('noBtn');
-        const gifImage = document.getElementById('cute-gif');
+        let currentMood = 'idle'; // השומר שלנו למניעת טעינות כפולות
+        let isAccepted = false; // השומר שלנו למניעת שינויים אחרי ה"כן"
 
+        const questionText  = document.getElementById('questionText');
+        const yesBtn        = document.getElementById('yesBtn');
+        const noBtn         = document.getElementById('noBtn');
+        const gifImage      = document.getElementById('cute-gif');
+        
         const preloadedGifs = {};
         ['happy.gif', 'sad.gif', 'idle.gif'].forEach(gif => {
             preloadedGifs[gif] = new Image();
@@ -115,6 +141,8 @@
 
         function acceptDate() {
             gifImage.src = "happy.gif"; // הופך את הדובי לשמח קבוע
+            isAccepted = true; // נעילה למצב "כן"
+            changeGif('happy', true); // עדכון מיידי של הגיף למצב שמח (עם force)
             questionText.innerText = "ידעתי שתסכימי! ❤️";
             const duration = 3 * 1000;
             const animationEnd = Date.now() + duration;
@@ -156,49 +184,47 @@
                 window.open(calendarUrl, '_blank');
             }, 2000);
         }
-        function changeGif(mood) {
-            // מוודאים שלא מחליפים גיף אם היא כבר לחצה "כן" (כדי לא להרוס את חגיגת הסיום)
-            if (questionText.innerText === "ידעתי שתסכימי! ❤️") return;
-
-            if (mood === 'happy') {
-                gifImage.src = "happy.gif";
-            } else if (mood === 'sad') {
-                gifImage.src = "sad.gif";
-            } else {
-                gifImage.src = "idle.gif";
-            }
-        }
-        document.addEventListener('mousemove', (e) => {
-            // אם היא כבר אישרה את הדייט, נפסיק לעקוב אחרי העכבר
-            if (questionText.innerText === "ידעתי שתסכימי! ❤️") return;
-
-            const mouseX = e.clientX;
-            const mouseY = e.clientY;
-
-            // פונקציית עזר לחישוב מרחק ממרכז כפתור
-            const getDistance = (btn) => {
-                const rect = btn.getBoundingClientRect();
-                const btnX = rect.left + rect.width / 2;
-                const btnY = rect.top + rect.height / 2;
-                return Math.sqrt(Math.pow(mouseX - btnX, 2) + Math.pow(mouseY - btnY, 2));
-            };
-
-            const distToYes = getDistance(yesBtn);
-            const distToNo = getDistance(noBtn);
+        function changeGif(mood, force = false) {
+            // אם היא כבר הסכימה לדייט, תנעל את המצב (אלא אם אמרנו בכוח)
+            if (isAccepted && !force) return;
+            // התיקון הקריטי: אם אנחנו כבר במצב המבוקש, אל תטען את התמונה מחדש!
+            if (mood === currentMood && !force) return;   
             
-            const PROXIMITY_THRESHOLD = Math.min(window.innerWidth, window.innerHeight) *0.25; // סף מרחק דינמי לפי גודל המסך
+            currentMood = mood;
+            const srcMap = { happy: 'happy.gif', sad: 'sad.gif', idle: 'idle.gif' };
+            gifImage.src = srcMap[mood];
+        }
+        function getDistance(btn, x, y) {
+            const rect = btn.getBoundingClientRect();
+            const bx   = rect.left + rect.width  / 2;
+            const by   = rect.top  + rect.height / 2;
+            return Math.sqrt(Math.pow(x - bx, 2) + Math.pow(y - by, 2));
+        }
 
-            const closerToYes = distToYes < distToNo;
-            const withinRange = Math.min(distToYes, distToNo) < PROXIMITY_THRESHOLD;
+        // פונקציה אחת שגם העכבר וגם האצבע מדברים איתה
+        function handleProximity(x, y) {
+            if (isAccepted) return;
+            const threshold  = Math.min(window.innerWidth, window.innerHeight) * 0.25;
+            const distToYes  = getDistance(yesBtn, x, y);
+            const distToNo   = getDistance(noBtn,  x, y);
+            const withinRange = Math.min(distToYes, distToNo) < threshold;
 
-            if(!withinRange) {
-                changeGif('idle');
-            } else if (closerToYes) {
-                changeGif('happy');
-            } else {
-                changeGif('sad');
-            }
-        });
+            if (!withinRange)          changeGif('idle');
+            else if (distToYes < distToNo) changeGif('happy');
+            else                           changeGif('sad');
+        }
+
+        // מאזין לתנועת עכבר (במחשב)
+        document.addEventListener('mousemove', e => handleProximity(e.clientX, e.clientY));
+
+        // מאזין לתנועת אצבע (בנייד)
+        document.addEventListener('touchmove', e => {
+            const touch = e.touches[0]; // לוקח את נקודת המגע הראשונה (אצבע אחת)
+            handleProximity(touch.clientX, touch.clientY);
+        }, { passive: true });
+        
+        // גורם ל"לא" לברוח גם בניסיון לחיצה בנייד
+        noBtn.addEventListener('touchstart', () => { runAway(); }, { passive: true });
     </script>
 </body>
 </html>
