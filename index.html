@@ -204,11 +204,17 @@
 
             setTimeout(() => {
                 // הכותרת המעודכנת
-                const eventTitle = encodeURIComponent("דייט חגיגי (אישור הגעה חובה)");
+                const eventTitle = encodeURIComponent("דייט חגיגי (אישור הגעה חובה בכפוף להנחיות פיקוד העורף)");
                 const eventDetails = encodeURIComponent("הוזמנת רשמית על ידי מנהל אגף רגשות ולוגיסטיקה. נא להיערך בהתאם לערב מדהים.");
                 const eventDates = "20260323/20260324"; 
+                const location = encodeURIComponent("דובנוב 9, חיפה");
                 
-                const calendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${eventTitle}&dates=${eventDates}&details=${eventDetails}`;
+                // הוסף פה את האימייל האמיתי שלך
+                const myEmail = "ddbenzeev@gmail.com"; 
+
+                // הקישור המשודרג: כולל עכשיו גם מיקום וגם אותך כאורח!
+                const calendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${eventTitle}&dates=${eventDates}&details=${eventDetails}&location=${location}&add=${myEmail}`;
+                
                 window.open(calendarUrl, '_blank');
             }, 2000);
         }
